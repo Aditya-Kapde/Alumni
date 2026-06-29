@@ -13,9 +13,6 @@ import {
   Globe,
   Users,
   Share2,
-  Heart,
-  MessageCircle,
-  Eye,
   ArrowLeft,
   User,
   Mail,
@@ -53,7 +50,7 @@ const EventDetails = () => {
       console.log("Fetching event with ID:", eventId);
       const data = await apiClient.getEventById(eventId);
       setEvent(data);
-      
+
       // Use real engagement metrics from event data
       setViewCount(data.views || 0);
       setLikeCount(data.likes || 0);
@@ -137,7 +134,7 @@ DTSTART:${event?.day} ${event?.starttime}
 DTEND:${event?.day} ${event?.endtime}
 END:VEVENT
 END:VCALENDAR`;
-    
+
     const blob = new Blob([icsContent], { type: 'text/calendar' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -145,7 +142,7 @@ END:VCALENDAR`;
     a.download = `${event?.title}.ics`;
     a.click();
     URL.revokeObjectURL(url);
-    
+
     toast({
       title: "Calendar Event Created",
       description: "Event has been added to your calendar!",
@@ -233,7 +230,7 @@ END:VCALENDAR`;
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-center min-w-[100px]">
                     <div className="text-xs font-bold uppercase tracking-wide mb-1">{event?.month}</div>
                     <div className="text-3xl font-bold">{event?.day}</div>
@@ -269,9 +266,9 @@ END:VCALENDAR`;
 
               {event?.imageUrl && (
                 <div className="w-full bg-gray-100 flex justify-center border-b border-dsce-blue/10">
-                  <img 
-                    src={event.imageUrl} 
-                    alt="Event Poster" 
+                  <img
+                    src={event.imageUrl}
+                    alt="Event Poster"
                     className="w-full h-auto max-h-[500px] object-contain"
                   />
                 </div>
@@ -285,7 +282,7 @@ END:VCALENDAR`;
                     {event?.description || "No description provided."}
                   </p>
                 </div>
-                
+
                 {event?.maxParticipants && (
                   <div className="mt-6 p-4 bg-dsce-blue/5 rounded-xl border border-dsce-blue/10">
                     <div className="flex items-center justify-between">
@@ -299,10 +296,10 @@ END:VCALENDAR`;
                     </div>
                     <div className="mt-3">
                       <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
+                        <div
                           className="bg-dsce-blue h-2 rounded-full transition-all duration-300"
-                          style={{ 
-                            width: `${Math.min(100, ((event.registeredCount || 0) / parseInt(String(event.maxParticipants || '0'))) * 100)}%` 
+                          style={{
+                            width: `${Math.min(100, ((event.registeredCount || 0) / parseInt(String(event.maxParticipants || '0'))) * 100)}%`
                           }}
                         />
                       </div>
@@ -323,7 +320,7 @@ END:VCALENDAR`;
               className="bg-white rounded-3xl shadow-xl border border-dsce-blue/10 p-8"
             >
               <h2 className="text-xl font-bold text-dsce-text-dark mb-6">Event Details</h2>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
@@ -337,7 +334,7 @@ END:VCALENDAR`;
                       <p className="text-sm text-gray-500">Start: {event.starttime} - End: {event.endtime}</p>
                     )}
                   </div>
-                  
+
                   <div>
                     <h3 className="font-semibold text-dsce-text-dark mb-2 flex items-center">
                       <MapPin className="w-5 h-5 mr-2 text-dsce-blue" />
@@ -346,7 +343,7 @@ END:VCALENDAR`;
                     <p className="text-gray-600">{event?.location}</p>
                   </div>
                 </div>
-                
+
                 <div className="space-y-4">
                   {event?.virtualLink && (
                     <div>
@@ -365,7 +362,7 @@ END:VCALENDAR`;
                       </a>
                     </div>
                   )}
-                  
+
                   {event?.registrationDeadline && (
                     <div>
                       <h3 className="font-semibold text-dsce-text-dark mb-2 flex items-center">
@@ -393,13 +390,13 @@ END:VCALENDAR`;
                 <User className="w-6 h-6 mr-2 text-dsce-blue" />
                 Organizer Information
               </h2>
-              
+
               <div className="space-y-4">
                 <div>
                   <p className="font-medium text-dsce-text-dark">{event?.organizerName || "DSCE Alumni Association"}</p>
                   <p className="text-sm text-gray-500">Event Organizer</p>
                 </div>
-                
+
                 {event?.organizerContact && (
                   <div className="space-y-3">
                     <a
@@ -411,7 +408,7 @@ END:VCALENDAR`;
                     </a>
                   </div>
                 )}
-                
+
                 <div className="pt-4 border-t border-dsce-blue/10">
                   <Button className="w-full bg-dsce-blue hover:bg-dsce-blue/90 text-white rounded-xl font-semibold">
                     Contact Organizer
@@ -428,7 +425,7 @@ END:VCALENDAR`;
               className="bg-white rounded-3xl shadow-xl border border-dsce-blue/10 p-8"
             >
               <h2 className="text-xl font-bold text-dsce-text-dark mb-6">Quick Actions</h2>
-              
+
               <div className="space-y-3">
                 <Button
                   variant="outline"
@@ -438,7 +435,7 @@ END:VCALENDAR`;
                   <Calendar className="w-4 h-4 mr-3" />
                   {event?.userRsvpStatus ? "Update RSVP" : "RSVP to Event"}
                 </Button>
-                
+
                 <Button
                   variant="outline"
                   className="w-full justify-start border-dsce-blue/20 hover:bg-dsce-blue/5 font-medium"
@@ -447,7 +444,7 @@ END:VCALENDAR`;
                   <Share2 className="w-4 h-4 mr-3" />
                   Share Event
                 </Button>
-                
+
                 <Button
                   variant="outline"
                   className="w-full justify-start border-dsce-blue/20 hover:bg-dsce-blue/5 font-medium"
@@ -456,7 +453,7 @@ END:VCALENDAR`;
                   <Download className="w-4 h-4 mr-3" />
                   Add to Calendar
                 </Button>
-                
+
                 <Button
                   variant="outline"
                   className="w-full justify-start border-dsce-blue/20 hover:bg-dsce-blue/5 font-medium"
