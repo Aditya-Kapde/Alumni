@@ -120,6 +120,7 @@ export interface EventDTO {
     organizerContact?: string;
     location: string;
     featured?: boolean;
+    imageUrl?: string;
     userRsvpStatus?: 'GOING' | 'MAYBE' | 'NOT_GOING' | null;
     createdAt?: string;
     updatedAt?: string;

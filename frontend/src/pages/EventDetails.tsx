@@ -267,34 +267,15 @@ END:VCALENDAR`;
                 </div>
               </div>
 
-              {/* Engagement Stats */}
-              <div className="p-6 border-b border-dsce-blue/10">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-6">
-                    <button
-                      onClick={handleLike}
-                      className="flex items-center gap-2 text-gray-600 hover:text-red-500 transition-colors"
-                    >
-                      <Heart className={`w-5 h-5 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
-                      <span className="font-medium">{likeCount}</span>
-                    </button>
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <MessageCircle className="w-5 h-5" />
-                      <span className="font-medium">{event.comments || 0}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Eye className="w-5 h-5" />
-                      <span className="font-medium">{viewCount}</span>
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleBookmark}
-                    className="text-gray-600 hover:text-dsce-blue transition-colors"
-                  >
-                    <Star className={`w-5 h-5 ${isBookmarked ? 'fill-dsce-blue text-dsce-blue' : ''}`} />
-                  </button>
+              {event?.imageUrl && (
+                <div className="w-full bg-gray-100 flex justify-center border-b border-dsce-blue/10">
+                  <img 
+                    src={event.imageUrl} 
+                    alt="Event Poster" 
+                    className="w-full h-auto max-h-[500px] object-contain"
+                  />
                 </div>
-              </div>
+              )}
 
               {/* Description */}
               <div className="p-6">

@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/label';
-import { Calendar, Plus, Clock, MapPin, Users, Loader2, X, Check, HelpCircle, FileText, Search, TrendingUp, Eye, Heart, MessageCircle } from 'lucide-react';
+import { Calendar, Plus, Clock, MapPin, Users, Loader2, X, Check, HelpCircle, FileText, Search, TrendingUp, Eye, Heart, MessageCircle, ImagePlus } from 'lucide-react';
 import { apiClient, type EventDTO } from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
 import { Star } from 'lucide-react';
@@ -35,8 +35,10 @@ const Events = () => {
     registrationDeadline: '',
     virtualLink: '',
     organizerName: '',
-    organizerContact: ''
+    organizerContact: '',
+    imageUrl: ''
   });
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const fetchEvents = async () => {
     try {
@@ -62,6 +64,47 @@ const Events = () => {
     fetchEvents();
   }, []);
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please upload an image smaller than 5MB.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setUploadingImage(true);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'ml_default');
+    formData.append('cloud_name', 'dbyq33qen');
+
+    try {
+      const response = await fetch('https://api.cloudinary.com/v1_1/dbyq33qen/image/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+      setNewEvent(prev => ({ ...prev, imageUrl: data.secure_url }));
+      toast({
+        title: "Success",
+        description: "Poster uploaded successfully."
+      });
+    } catch (error) {
+      toast({
+        title: "Upload failed",
+        description: "Failed to upload image. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   const handleCreateEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -80,7 +123,8 @@ const Events = () => {
         registrationDeadline: newEvent.registrationDeadline || undefined,
         virtualLink: newEvent.virtualLink || undefined,
         organizerName: newEvent.organizerName || undefined,
-        organizerContact: newEvent.organizerContact || undefined
+        organizerContact: newEvent.organizerContact || undefined,
+        imageUrl: newEvent.imageUrl || undefined
       };
       
       await apiClient.createEvent(eventData);
@@ -99,7 +143,8 @@ const Events = () => {
         registrationDeadline: '',
         virtualLink: '',
         organizerName: '',
-        organizerContact: ''
+        organizerContact: '',
+        imageUrl: ''
       });
       fetchEvents();
     } catch (error) {
@@ -290,16 +335,7 @@ const Events = () => {
                         </div>
 
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-1">
-                              <Eye className="w-4 h-4" />
-                              <span className="text-sm">{Math.floor(Math.random() * 100) + 50}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Heart className="w-4 h-4" />
-                              <span className="text-sm">{Math.floor(Math.random() * 50) + 10}</span>
-                            </div>
-                          </div>
+
                           <Button 
                             variant="secondary"
                             className="bg-white text-dsce-blue hover:bg-white/90 rounded-xl font-semibold"
@@ -375,22 +411,7 @@ const Events = () => {
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3 text-xs text-gray-500">
-                        <div className="flex items-center gap-1">
-                          <Eye className="w-3 h-3" />
-                          <span>{Math.floor(Math.random() * 100) + 20}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Heart className="w-3 h-3" />
-                          <span>{Math.floor(Math.random() * 30) + 5}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <MessageCircle className="w-3 h-3" />
-                          <span>{Math.floor(Math.random() * 10) + 1}</span>
-                        </div>
-                      </div>
-                    </div>
+
 
                     <Button 
                       variant="outline" 
@@ -619,6 +640,47 @@ const Events = () => {
                           placeholder="e.g. alumni@dsce.edu"
                           className="h-12 rounded-xl border-2 border-black focus:border-dsce-blue focus:ring-dsce-blue/20 text-black placeholder:text-gray-500 bg-white"
                         />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Poster Image */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-dsce-text-dark flex items-center">
+                      <ImagePlus className="w-5 h-5 mr-2 text-dsce-blue" />
+                      Event Poster
+                    </h3>
+                    
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold text-gray-700">Poster Image (Optional)</Label>
+                      <div className="flex items-center gap-4">
+                        {newEvent.imageUrl && (
+                          <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200">
+                            <img src={newEvent.imageUrl} alt="Poster preview" className="w-full h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => setNewEvent(prev => ({ ...prev, imageUrl: '' }))}
+                              className="absolute top-1 right-1 p-1 bg-black/50 text-white rounded-full hover:bg-black/70"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        )}
+                        <label className="flex-1 cursor-pointer">
+                          <div className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-50 border border-dashed border-gray-300 rounded-xl hover:bg-gray-100 transition-colors">
+                            <ImagePlus className="w-5 h-5 text-gray-500" />
+                            <span className="text-sm text-gray-600 font-medium">
+                              {uploadingImage ? 'Uploading...' : 'Upload Poster Image'}
+                            </span>
+                          </div>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleImageUpload}
+                            disabled={uploadingImage}
+                          />
+                        </label>
                       </div>
                     </div>
                   </div>

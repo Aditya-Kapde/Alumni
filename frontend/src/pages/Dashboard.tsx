@@ -946,20 +946,7 @@ export default function Dashboard() {
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center space-x-4 mt-2">
-                          <div className="flex items-center gap-1 text-xs text-gray-600">
-                            <Eye className="h-4 w-4" />
-                            <span>{event.views || 0}</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-xs text-gray-600">
-                            <Heart className="h-4 w-4" />
-                            <span>{event.likes || 0}</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-xs text-gray-600">
-                            <MessageCircle className="h-4 w-4" />
-                            <span>{event.comments || 0}</span>
-                          </div>
-                        </div>
+
                       </div>
                       <div className="self-center -ml-4 relative">
                         <Button

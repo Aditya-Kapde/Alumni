@@ -26,6 +26,7 @@ public class EventDTO {
     private String location;
     private String userRsvpStatus; // GOING, MAYBE, NOT_GOING, or null
     private boolean featured; // Admin can feature events
+    private String imageUrl; // Poster image for the event
     
     // Engagement metrics
     private Integer likes = 0;

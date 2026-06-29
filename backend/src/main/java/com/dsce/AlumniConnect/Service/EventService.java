@@ -95,6 +95,7 @@ public class EventService {
         event.setOrganizerContact(eventDTO.getOrganizerContact());
         event.setLocation(eventDTO.getLocation());
         event.setFeatured(eventDTO.isFeatured());
+        event.setImageUrl(eventDTO.getImageUrl());
 
         event.setEventDate(LocalDateTime.now()); // Simplified date handling
         
@@ -168,6 +169,7 @@ public class EventService {
         dto.setOrganizerContact(event.getOrganizerContact());
         dto.setLocation(event.getLocation());
         dto.setFeatured(event.isFeatured());
+        dto.setImageUrl(event.getImageUrl());
         
         long registeredCount = eventRSVPRepository.countByEventIdAndStatus(event.getId(), EventRSVP.RsvpStatus.GOING);
         dto.setRegisteredCount((int) registeredCount);

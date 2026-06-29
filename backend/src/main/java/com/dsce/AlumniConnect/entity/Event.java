@@ -33,6 +33,7 @@ public class Event {
     private String updateDate;
     private LocalDateTime eventDate;
     private boolean featured = false; // Admin can feature events
+    private String imageUrl; // Poster image for the event
     
     // Engagement metrics
     private Integer likes = 0;
