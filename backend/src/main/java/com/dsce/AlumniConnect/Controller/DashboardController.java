@@ -144,6 +144,9 @@ public class DashboardController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AnnouncementDTO> createAnnouncement(@RequestBody Announcement announcement) {
         try {
+            if (announcement.getCreatedAt() == null) {
+                announcement.setCreatedAt(java.time.LocalDateTime.now());
+            }
             Announcement savedAnnouncement = announcementRepository.save(announcement);
             AnnouncementDTO dto = new AnnouncementDTO(
                     savedAnnouncement.getId(),
