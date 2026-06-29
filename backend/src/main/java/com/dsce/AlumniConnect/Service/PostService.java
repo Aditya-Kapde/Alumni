@@ -94,7 +94,8 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        if (!post.getAuthorId().equals(getUserByEmail(userEmail).getId())) {
+        User user = getUserByEmail(userEmail);
+        if (!post.getAuthorId().equals(user.getId()) && user.getRole() != User.Role.ADMIN) {
             throw new RuntimeException("You can only edit your own posts");
         }
 
@@ -121,7 +122,8 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        if (!post.getAuthorId().equals(getUserByEmail(userEmail).getId())) {
+        User user = getUserByEmail(userEmail);
+        if (!post.getAuthorId().equals(user.getId()) && user.getRole() != User.Role.ADMIN) {
             throw new RuntimeException("You can only delete your own posts");
         }
 

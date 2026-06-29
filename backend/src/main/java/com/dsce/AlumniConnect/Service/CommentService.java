@@ -74,8 +74,8 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
-        // Check if user is the author of the comment
-        if (!comment.getAuthorId().equals(user.getId())) {
+        // Check if user is the author of the comment or an ADMIN
+        if (!comment.getAuthorId().equals(user.getId()) && user.getRole() != User.Role.ADMIN) {
             throw new RuntimeException("You can only delete your own comments");
         }
 

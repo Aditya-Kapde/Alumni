@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/Button';
-import { Calendar, MoreHorizontal, Bell, Clock, MessageCircle, Heart, Check, HelpCircle, Plus, X, RefreshCw, AlertCircle, Activity, Briefcase, Users, ArrowRight, Megaphone, Eye } from 'lucide-react';
+import { Calendar, MoreHorizontal, Bell, Clock, MessageCircle, Heart, Check, HelpCircle, Plus, X, RefreshCw, AlertCircle, Activity, Briefcase, Users, ArrowRight, Megaphone, Eye, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { apiClient, type UserProfile, getImageUrl } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
@@ -264,6 +264,29 @@ export default function Dashboard() {
     } catch (error) {
       console.error('Failed to add comment:', error);
       toast({ title: "Error", description: "Failed to add comment. Please try again.", variant: "destructive" });
+    }
+  };
+
+  const handleDeleteComment = async (postId: string, commentId: string) => {
+    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+    try {
+      await apiClient.deleteComment(commentId);
+      
+      setComments(prev => ({
+        ...prev,
+        [postId]: prev[postId]?.filter(c => c.id !== commentId) || []
+      }));
+      
+      setPosts(prev => prev.map(post => 
+        post.id === postId 
+          ? { ...post, comments: Math.max(0, post.comments - 1) } 
+          : post
+      ));
+      
+      toast({ title: "Success", description: "Comment deleted successfully." });
+    } catch (error) {
+      console.error('Failed to delete comment:', error);
+      toast({ title: "Error", description: "Failed to delete comment.", variant: "destructive" });
     }
   };
 
@@ -609,7 +632,7 @@ export default function Dashboard() {
                                 </span>
                               )}
                             </div>
-                            {post.isAuthor && (
+                            {(post.isAuthor || user?.role === 'ADMIN') && (
                               <div className="flex items-center space-x-1">
                                 <button
                                   onClick={() => handleEditPost(post)}
@@ -780,14 +803,25 @@ export default function Dashboard() {
                                       <span className="text-xs text-gray-500">• {comment.authorRole}</span>
                                     )}
                                   </div>
-                                  <span className="text-xs text-gray-500">
-                                    {new Date(comment.createdAt).toLocaleDateString('en-US', {
-                                      month: 'short',
-                                      day: 'numeric',
-                                      hour: '2-digit',
-                                      minute: '2-digit'
-                                    })}
-                                  </span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs text-gray-500">
+                                      {new Date(comment.createdAt).toLocaleDateString('en-US', {
+                                        month: 'short',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                      })}
+                                    </span>
+                                    {(comment.isAuthor || user?.role === 'ADMIN') && (
+                                      <button
+                                        onClick={() => handleDeleteComment(post.id, comment.id)}
+                                        className="text-gray-400 hover:text-red-500 transition-colors ml-2"
+                                        title="Delete comment"
+                                      >
+                                        <Trash2 className="w-3 h-3" />
+                                      </button>
+                                    )}
+                                  </div>
                                 </div>
                                 <p className="text-sm text-gray-700 break-words">{comment.content}</p>
                               </div>

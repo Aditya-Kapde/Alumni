@@ -7,6 +7,7 @@ import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
 import MotionWrapper from '@/components/ui/MotionWrapper';
 import PostModal from '@/components/posts/PostModal';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Post {
   id: string;
@@ -27,6 +28,7 @@ interface Post {
 }
 
 export default function Posts() {
+  const { user } = useAuth();
   const { toast } = useToast();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
@@ -208,6 +210,29 @@ export default function Posts() {
     }
   };
 
+  const handleDeleteComment = async (postId: string, commentId: string) => {
+    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+    try {
+      await apiClient.deleteComment(commentId);
+      
+      setComments(prev => ({
+        ...prev,
+        [postId]: prev[postId]?.filter(c => c.id !== commentId) || []
+      }));
+      
+      setPosts(prev => prev.map(post => 
+        post.id === postId 
+          ? { ...post, comments: Math.max(0, post.comments - 1) } 
+          : post
+      ));
+      
+      toast({ title: "Success", description: "Comment deleted successfully." });
+    } catch (error) {
+      console.error('Failed to delete comment:', error);
+      toast({ title: "Error", description: "Failed to delete comment.", variant: "destructive" });
+    }
+  };
+
   const handleEditPost = (post: Post) => {
     setEditingPost(post);
     setIsNewPostModalOpen(true);
@@ -290,7 +315,7 @@ export default function Posts() {
                               </span>
                             )}
                           </div>
-                          {post.isAuthor && (
+                          {(post.isAuthor || user?.role === 'ADMIN') && (
                             <div className="flex items-center space-x-1">
                               <button
                                 onClick={() => handleEditPost(post)}
@@ -445,14 +470,25 @@ export default function Posts() {
                                     <span className="text-xs text-gray-500">• {comment.authorRole}</span>
                                   )}
                                 </div>
-                                <span className="text-xs text-gray-500">
-                                  {comment.createdAt ? new Date(comment.createdAt).toLocaleDateString('en-US', {
-                                    month: 'short',
-                                    day: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                  }) : 'Just now'}
-                                </span>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs text-gray-500">
+                                    {comment.createdAt ? new Date(comment.createdAt).toLocaleDateString('en-US', {
+                                      month: 'short',
+                                      day: 'numeric',
+                                      hour: '2-digit',
+                                      minute: '2-digit'
+                                    }) : 'Just now'}
+                                  </span>
+                                  {(comment.isAuthor || user?.role === 'ADMIN') && (
+                                    <button
+                                      onClick={() => handleDeleteComment(post.id, comment.id)}
+                                      className="text-gray-400 hover:text-red-500 transition-colors ml-2"
+                                      title="Delete comment"
+                                    >
+                                      <Trash2 className="w-3 h-3" />
+                                    </button>
+                                  )}
+                                </div>
                               </div>
                               <p className="text-sm text-dsce-text-dark break-words">{comment.content}</p>
                             </div>
