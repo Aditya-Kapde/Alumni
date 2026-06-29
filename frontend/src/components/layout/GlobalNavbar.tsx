@@ -15,6 +15,7 @@ import {
   Briefcase,
   Image
 } from 'lucide-react';
+import { API_BASE_URL } from '@/lib/api';
 
 export default function GlobalNavbar() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -22,7 +23,7 @@ export default function GlobalNavbar() {
 
   // Format the profile picture URL safely
   const profilePic = user?.profilePicture
-    ? (user.profilePicture.startsWith('http') ? user.profilePicture : `http://localhost:8080/${user.profilePicture}`)
+    ? (user.profilePicture.startsWith('http') ? user.profilePicture : `${API_BASE_URL}/${user.profilePicture}`)
     : undefined;
 
   // Hierarchical navigation array

@@ -32,7 +32,7 @@ export default function Landing() {
         {/* Background Image */}
         <div className="absolute inset-0 overflow-hidden">
           <img
-            src="https://image-upload.getmycollege.com/new-uploads/college/gallery/dayananda-sagar-college-of-engineering1-gallery-image-968.jpg"
+            src="https://www.dsce.edu.in/images/Gallery/2.jpg"
             alt="DSCE Campus"
             className="w-full h-full object-cover"
           />

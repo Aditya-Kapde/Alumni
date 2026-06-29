@@ -18,7 +18,7 @@ import {
     Linkedin
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { apiClient, type UserProfile } from '@/lib/api';
+import { apiClient, type UserProfile, API_BASE_URL } from '@/lib/api';
 import { exportAlumniToExcel } from '@/utils/excelExport';
 
 interface ProfessionalAnalytics {
@@ -751,7 +751,7 @@ export default function AdminAlumniManagement() {
                                             <div className="flex items-center gap-3">
                                                 {alum.profilePicture ? (
                                                     <img 
-                                                        src={`http://localhost:8080/${alum.profilePicture}`}
+                                                        src={`${API_BASE_URL}/${alum.profilePicture}`}
                                                         alt={alum.firstName}
                                                         className="w-8 h-8 rounded-full object-cover"
                                                     />
@@ -994,7 +994,7 @@ export default function AdminAlumniManagement() {
                                     <div className="flex items-center gap-4">
                                         {selectedAlumniDetail.profilePicture ? (
                                             <img 
-                                                src={`http://localhost:8080/${selectedAlumniDetail.profilePicture}`}
+                                                src={`${API_BASE_URL}/${selectedAlumniDetail.profilePicture}`}
                                                 alt={selectedAlumniDetail.firstName}
                                                 className="w-16 h-16 rounded-full object-cover border-4 border-dsce-blue/20"
                                             />

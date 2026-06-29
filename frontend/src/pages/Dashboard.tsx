@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/Button';
 import { Calendar, MoreHorizontal, Bell, Clock, MessageCircle, Heart, Check, HelpCircle, Plus, X, RefreshCw, AlertCircle, Activity, Briefcase, Users, ArrowRight, Megaphone, Eye } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { apiClient, type UserProfile } from '@/lib/api';
+import { apiClient, type UserProfile, API_BASE_URL, getImageUrl } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import {
   dashboardUser,
@@ -350,12 +350,12 @@ export default function Dashboard() {
     name: `${userProfile.firstName} ${userProfile.lastName}`,
     role: userProfile.headline || 'Alumni',
     initials: `${userProfile.firstName?.[0] || ''}${userProfile.lastName?.[0] || ''}`.toUpperCase(),
-    avatar: userProfile.profilePicture ? `http://localhost:8080/${userProfile.profilePicture}` : null
+    avatar: userProfile.profilePicture ? getImageUrl(userProfile.profilePicture) : null
   } : isMockUser ? dashboardUser : {
     name: user ? `${user.firstName} ${user.lastName}` : 'User',
     role: user?.headline || 'Alumni Member',
     initials: user ? `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase() : 'U',
-    avatar: user?.profilePicture ? `http://localhost:8080/${user.profilePicture}` : null
+    avatar: user?.profilePicture ? getImageUrl(user.profilePicture) : null
   };
 
   if (loading) {

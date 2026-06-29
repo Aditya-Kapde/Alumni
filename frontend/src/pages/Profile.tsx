@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
-import MotionWrapper from '@/components/ui/MotionWrapper';
 import { 
   MapPin, 
   Mail, 
@@ -24,11 +23,9 @@ import {
   ExternalLink,
   ChevronRight
 } from 'lucide-react';
-import { apiClient, type UserProfile } from '@/lib/api';
+import { apiClient, type UserProfile, API_BASE_URL, getImageUrl } from '@/lib/api';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-
-const API_BASE_URL = 'http://localhost:8080';
 
 type TabType = 'overview' | 'experience' | 'education' | 'portfolio' | 'expertise';
 
@@ -138,7 +135,7 @@ export default function Profile() {
                         <div className="absolute inset-0 bg-gradient-to-tr from-dsce-gold to-white/0 opacity-50"></div>
                         <div className="h-full w-full rounded-[20px] bg-white flex items-center justify-center overflow-hidden border border-white/30">
                             {user?.profilePicture ? (
-                                <img src={`${API_BASE_URL}/${user.profilePicture}`} alt="Profile" className="h-full w-full object-cover" />
+                                <img src={getImageUrl(user.profilePicture) || ''} alt="Profile" className="h-full w-full object-cover" />
                             ) : (
                                 <div className="h-full w-full bg-gradient-to-br from-dsce-blue to-dsce-light-blue flex items-center justify-center">
                                     <span className="text-white text-5xl font-bold">

@@ -7,9 +7,7 @@ import {
     MapPin, Mail, Linkedin, Globe, Briefcase, GraduationCap,
     Award, FolderKanban, Code, ArrowLeft, Shield, CheckCircle2
 } from 'lucide-react';
-import { apiClient, type UserProfile } from '@/lib/api';
-
-const API_BASE_URL = 'http://localhost:8080';
+import { apiClient, type UserProfile, API_BASE_URL } from '@/lib/api';
 
 export default function AlumniDetail() {
     const { id } = useParams<{ id: string }>();

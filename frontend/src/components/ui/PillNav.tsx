@@ -1,4 +1,4 @@
-import { useState, useRef, type CSSProperties, type ReactNode } from 'react';
+import { useState, type CSSProperties, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 
@@ -44,8 +44,6 @@ const PillNav = ({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [itemWidths, setItemWidths] = useState<Record<number, number>>({});
-
-  const navItemsRef = useRef<HTMLDivElement>(null);
 
   const isRouterLink = (href: string) => href && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('#');
 
