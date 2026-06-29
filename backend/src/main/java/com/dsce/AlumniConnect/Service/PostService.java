@@ -136,14 +136,15 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
         User user = getUserByEmail(userEmail);
-        List<String> likedBy = post.getLikedBy() != null ? post.getLikedBy() : new ArrayList<>();
+        List<String> likedBy = post.getLikedBy() != null ? new ArrayList<>(post.getLikedBy()) : new ArrayList<>();
+        int currentLikes = post.getLikes() != null ? post.getLikes() : 0;
 
         if (likedBy.contains(user.getId())) {
             likedBy.remove(user.getId());
-            post.setLikes(Math.max(0, post.getLikes() - 1));
+            post.setLikes(Math.max(0, currentLikes - 1));
         } else {
             likedBy.add(user.getId());
-            post.setLikes(post.getLikes() + 1);
+            post.setLikes(currentLikes + 1);
         }
 
         post.setLikedBy(likedBy);
@@ -156,7 +157,8 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        post.setShares(post.getShares() + 1);
+        int currentShares = post.getShares() != null ? post.getShares() : 0;
+        post.setShares(currentShares + 1);
         Post updatedPost = postRepository.save(post);
 
         log.info("Shared post {} by user: {}", postId, userEmail);
@@ -168,7 +170,7 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
         User user = getUserByEmail(userEmail);
-        List<String> bookmarkedBy = post.getBookmarkedBy() != null ? post.getBookmarkedBy() : new ArrayList<>();
+        List<String> bookmarkedBy = post.getBookmarkedBy() != null ? new ArrayList<>(post.getBookmarkedBy()) : new ArrayList<>();
 
         if (bookmarkedBy.contains(user.getId())) {
             bookmarkedBy.remove(user.getId());
@@ -187,7 +189,7 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
         User user = getUserByEmail(userEmail);
-        List<String> reportedBy = post.getReportedBy() != null ? post.getReportedBy() : new ArrayList<>();
+        List<String> reportedBy = post.getReportedBy() != null ? new ArrayList<>(post.getReportedBy()) : new ArrayList<>();
 
         if (reportedBy.contains(user.getId())) {
             throw new RuntimeException("You have already reported this post");

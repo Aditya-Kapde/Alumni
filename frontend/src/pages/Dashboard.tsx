@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/Button';
-import { Calendar, MoreHorizontal, Bell, Clock, MessageCircle, Heart, Check, HelpCircle, Plus, X, RefreshCw, AlertCircle, Activity, Briefcase, Users, ArrowRight, Megaphone, Eye, Trash2 } from 'lucide-react';
+import { Calendar, MoreHorizontal, Bell, Clock, MessageCircle, Heart, Check, HelpCircle, Plus, X, RefreshCw, AlertCircle, Activity, Briefcase, Users, ArrowRight, Megaphone, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { apiClient, type UserProfile, getImageUrl } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';

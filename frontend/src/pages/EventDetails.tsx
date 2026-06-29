@@ -32,10 +32,7 @@ const EventDetails = () => {
   const [event, setEvent] = useState<EventDTO | null>(null);
   const [loading, setLoading] = useState(true);
   const [rsvpModalOpen, setRsvpModalOpen] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [viewCount, setViewCount] = useState(0);
-  const [likeCount, setLikeCount] = useState(0);
   const { toast } = useToast();
 
   const fetchEvent = async () => {
@@ -50,10 +47,6 @@ const EventDetails = () => {
       console.log("Fetching event with ID:", eventId);
       const data = await apiClient.getEventById(eventId);
       setEvent(data);
-
-      // Use real engagement metrics from event data
-      setViewCount(data.views || 0);
-      setLikeCount(data.likes || 0);
     } catch (error) {
       console.error("Error fetching event:", error);
       toast({
@@ -103,15 +96,6 @@ const EventDetails = () => {
         description: "Event link copied to clipboard!",
       });
     }
-  };
-
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
-    toast({
-      title: isLiked ? "Removed from Likes" : "Added to Likes",
-      description: isLiked ? "Event removed from your likes." : "Event added to your likes!",
-    });
   };
 
   const handleBookmark = () => {
