@@ -74,6 +74,19 @@ public class AuthService {
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        if (request.getGraduationBatch() != null) {
+            user.setGraduationYear(request.getGraduationBatch());
+        }
+
+        if (request.getGraduationDepartment() != null && !request.getGraduationDepartment().isBlank()) {
+            user.setDepartment(request.getGraduationDepartment().trim());
+        }
+
+        if (request.getUsn() != null && !request.getUsn().isBlank()) {
+            user.setUsn(request.getUsn().trim().toUpperCase());
+        }
+
         user.setRole(User.Role.USER);
         user.setAuthProvider(User.AuthProvider.LOCAL);
         user.setCreatedAt(LocalDateTime.now());

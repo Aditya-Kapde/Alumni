@@ -43,6 +43,14 @@ Thumbs.db
 .env.production.local
 *.local
 
+# Local Spring Boot config (keep example config tracked)
+backend/src/main/resources/application.properties
+backend/src/main/resources/application-*.properties
+!backend/src/main/resources/application-example.properties
+
+# TypeScript/Vite build artifacts
+*.tsbuildinfo
+
 # Logs
 logs/
 *.log

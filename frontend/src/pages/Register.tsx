@@ -18,6 +18,9 @@ const registerSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
   lastName: z.string(),
   email: z.string().email('Please enter a valid email address'),
+  graduationBatch: z.string().optional(),
+  graduationDepartment: z.string().optional(),
+  usn: z.string().optional(),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -37,6 +40,9 @@ export default function Register() {
       firstName: '',
       lastName: '',
       email: '',
+      graduationBatch: '',
+      graduationDepartment: '',
+      usn: '',
       password: '',
       confirmPassword: '',
     },
@@ -52,6 +58,9 @@ export default function Register() {
         lastName: data.lastName,
         email: data.email,
         password: data.password,
+        graduationBatch: data.graduationBatch ? Number(data.graduationBatch) : undefined,
+        graduationDepartment: data.graduationDepartment?.trim() || undefined,
+        usn: data.usn?.trim() || undefined,
       };
 
       const response = await apiClient.signup(signupData);
@@ -144,6 +153,65 @@ export default function Register() {
                         <Input
                           type="email"
                           placeholder="john@example.com"
+                          className="border-[#003366]/10 bg-[#F8F8F8] text-[#333333] placeholder:text-gray-500 focus-visible:ring-[#003366]/50"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="graduationBatch"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#333333]">Graduation Batch</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            inputMode="numeric"
+                            step="1"
+                            placeholder="2023"
+                            className="border-[#003366]/10 bg-[#F8F8F8] text-[#333333] placeholder:text-gray-500 focus-visible:ring-[#003366]/50"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="graduationDepartment"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#333333]">Graduation Department</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="i.e. CSE"
+                            className="border-[#003366]/10 bg-[#F8F8F8] text-[#333333] placeholder:text-gray-500 focus-visible:ring-[#003366]/50"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="usn"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[#333333]">USN (Optional)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="i.e. 1DS21EC115"
                           className="border-[#003366]/10 bg-[#F8F8F8] text-[#333333] placeholder:text-gray-500 focus-visible:ring-[#003366]/50"
                           {...field}
                         />

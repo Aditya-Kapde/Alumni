@@ -20,6 +20,12 @@ public class SignUpRequest {
     @Email(message = "Email must be valid")
     private String email;
 
+    private Integer graduationBatch;
+
+    private String graduationDepartment;
+
+    private String usn;
+
     @NotBlank(message = "Password is required")
     private String password;
 }

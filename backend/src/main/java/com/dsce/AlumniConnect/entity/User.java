@@ -37,6 +37,7 @@ public class User {
 
     @NotBlank(message = "Department is required for alumni verification")
     private String department;
+    private String usn;
     private String profilePicture;
     private String bio;
     private String linkedinProfile;

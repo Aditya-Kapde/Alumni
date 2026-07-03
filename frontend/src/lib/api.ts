@@ -20,6 +20,9 @@ export interface SignUpRequest {
     lastName: string;
     email: string;
     password: string;
+    graduationBatch?: number;
+    graduationDepartment?: string;
+    usn?: string;
 }
 
 export interface LoginRequest {
