@@ -14,6 +14,21 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 import { GoogleSignInButton } from '@/components/ui/GoogleSignInButton';
 
+const ENGINEERING_DEPARTMENTS = [
+  'CSE',
+  'ECE',
+  'ISE',
+  'Mechanical',
+  'Civil',
+  'Electrical',
+  'Electronics',
+  'Chemical',
+  'Aerospace',
+  'Biotechnology',
+  'Information Science',
+  'Computer Science',
+];
+
 const registerSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
   lastName: z.string(),
@@ -21,7 +36,12 @@ const registerSchema = z.object({
   graduationBatch: z.string().optional(),
   graduationDepartment: z.string().optional(),
   usn: z.string().optional(),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: z.string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number')
+    .regex(/[!@#$%^&*(),.?":{}|<>]/, 'Password must contain at least one special character'),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -191,11 +211,19 @@ export default function Register() {
                       <FormItem>
                         <FormLabel className="text-[#333333]">Graduation Department</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="i.e. CSE"
-                            className="border-[#003366]/10 bg-[#F8F8F8] text-[#333333] placeholder:text-gray-500 focus-visible:ring-[#003366]/50"
-                            {...field}
-                          />
+                          <div className="relative">
+                            <Input
+                              placeholder="Select or type department"
+                              list="departments"
+                              className="border-[#003366]/10 bg-[#F8F8F8] text-[#333333] placeholder:text-gray-500 focus-visible:ring-[#003366]/50"
+                              {...field}
+                            />
+                            <datalist id="departments">
+                              {ENGINEERING_DEPARTMENTS.map((dept) => (
+                                <option key={dept} value={dept} />
+                              ))}
+                            </datalist>
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>

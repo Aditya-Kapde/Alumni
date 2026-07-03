@@ -2,6 +2,7 @@ package com.dsce.AlumniConnect.DTO;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,5 +28,9 @@ public class SignUpRequest {
     private String usn;
 
     @NotBlank(message = "Password is required")
+    @Pattern(
+        regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?\\\":{}|<>]).{8,}$",
+        message = "Password must contain at least 8 characters, including uppercase, lowercase, number, and special character"
+    )
     private String password;
 }

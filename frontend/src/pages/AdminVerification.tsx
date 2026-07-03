@@ -264,6 +264,24 @@ export default function AdminVerification() {
                           <Calendar className="w-4 h-4 mr-3 text-dsce-gold" />
                           Applied: {new Date(request.createdAt || '').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                         </div>
+                        {request.usn && (
+                          <div className="flex items-center text-gray-600 text-sm font-medium">
+                            <span className="w-4 h-4 mr-3 text-dsce-gold font-bold">ID</span>
+                            <span className="font-semibold text-gray-700 bg-dsce-gold/10 px-2 py-1 rounded">{request.usn}</span>
+                          </div>
+                        )}
+                        {request.graduationYear && (
+                          <div className="flex items-center text-gray-600 text-sm font-medium">
+                            <span className="w-4 h-4 mr-3 text-dsce-gold">📚</span>
+                            Batch: <span className="font-semibold text-gray-700 ml-2">{request.graduationYear}</span>
+                          </div>
+                        )}
+                        {request.department && (
+                          <div className="flex items-center text-gray-600 text-sm font-medium">
+                            <span className="w-4 h-4 mr-3 text-dsce-gold">🎓</span>
+                            Department: <span className="font-semibold text-gray-700 ml-2">{request.department}</span>
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex items-center gap-3">
