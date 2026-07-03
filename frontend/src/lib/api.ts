@@ -46,6 +46,7 @@ export interface UserProfile {
     profileComplete: boolean;
     graduationYear?: number;
     department?: string;
+    usn?: string;
     contactNumber?: string;
     bio?: string;
     location?: string;
