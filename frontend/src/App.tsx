@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import ProtectedRoute from './components/layout/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Lazy load components
 const Landing = lazy(() => import('./pages/Landing'));
@@ -49,9 +50,10 @@ const VerificationPending = lazy(() => import('./pages/VerificationPending'));
 
 function App() {
   return (
-    <HelmetProvider>
-      <Router>
-        <Suspense fallback={<LoadingFallback />}>
+    <ErrorBoundary>
+      <HelmetProvider>
+        <Router>
+          <Suspense fallback={<LoadingFallback />}>
           <Routes>
             <Route element={<MainLayout />}>
               <Route path="/" element={<Landing />} />
@@ -102,6 +104,7 @@ function App() {
         </Suspense>
       </Router>
     </HelmetProvider>
+    </ErrorBoundary>
   );
 }
 
