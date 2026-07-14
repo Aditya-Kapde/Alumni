@@ -51,6 +51,7 @@ public class SpringSecurity {
                         .requestMatchers("/api/profile/resume").permitAll()
                         .requestMatchers("/api/dashboard/announcements").permitAll()
                         .requestMatchers("/api/events/featured", "/events/featured").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/chat.html").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/ws-forum", "/ws-forum/**").permitAll()
@@ -61,7 +62,8 @@ public class SpringSecurity {
                         .requestMatchers("/api/profile/**").authenticated()
                         .requestMatchers("/users/*/resume").authenticated()
                         .requestMatchers("/api/jobs/**").authenticated()
-                        .requestMatchers("/alumni/**", "/api/alumni/**", "/profiles/**").permitAll()
+                        .requestMatchers("/alumni/**", "/api/alumni/**").authenticated()
+                        .requestMatchers("/profiles/**").permitAll()
                         .anyRequest().authenticated());
 
         http.addFilterBefore(jwtfilter, UsernamePasswordAuthenticationFilter.class);
@@ -90,14 +92,15 @@ public class SpringSecurity {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        if ("*".equals(allowedOrigins)) {
-            configuration.addAllowedOriginPattern("*");
-        } else {
-            configuration.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
-        }
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // Parse comma-separated origins and trim whitespace
+        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .toList();
+        configuration.setAllowedOrigins(origins);
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

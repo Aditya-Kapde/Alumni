@@ -48,7 +48,7 @@ public class AuthController {
     }
 
     @PostMapping("/google")
-    public ResponseEntity<?> googleLogin(@RequestBody GoogleSignUpRequest googleSignUpRequest) {
+    public ResponseEntity<?> googleLogin(@jakarta.validation.Valid @RequestBody GoogleSignUpRequest googleSignUpRequest) {
         try {
             log.info("Google login request received");
             AuthResponse response = authService.googleLogin(googleSignUpRequest);

@@ -2,17 +2,8 @@ import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/Button';
 import { Calendar, MoreHorizontal, Bell, Clock, MessageCircle, Heart, Check, HelpCircle, Plus, X, RefreshCw, AlertCircle, Activity, Briefcase, Users, ArrowRight, Megaphone, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { apiClient, type UserProfile, getImageUrl } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
-import {
-  dashboardUser,
-  dashboardStats as mockStats,
-  dashboardAnnouncements,
-  dashboardJobApplications,
-  upcomingEvents,
-  dashboardProjectFundings,
-  mockCredentials
-} from '@/data/mockData';
+import { DashboardService, ProfileService } from '@/services/authService';
 import PostModal from '@/components/posts/PostModal';
 
 // Define types for dashboard data
@@ -67,6 +58,8 @@ import MotionWrapper from '@/components/ui/MotionWrapper';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import type { UserProfile } from '@/lib/api';
+import { apiClient, getImageUrl } from '@/lib/api';
 
 export default function Dashboard() {
   console.log('Dashboard component mounting...');
@@ -97,102 +90,54 @@ export default function Dashboard() {
     fundings: []
   });
 
-  const [adminStats, setAdminStats] = useState<AdminStats | null>(null);
+  const [adminStats] = useState<AdminStats | null>(null);
 
   const [dataUpdateKey, setDataUpdateKey] = useState(0); // Force re-render
 
   const fetchDashboardData = async () => {
-    console.log('Fetching dashboard data... Loading state:', loading);
-    // Check if logged in as mock user
-    if (user?.email === mockCredentials.email) {
-      console.log('Mock user detected, using mock data');
-      // Simulate network delay for realism
-      await new Promise(resolve => setTimeout(resolve, 800));
-
-      setDashboardData({
-        stats: {
-          jobsApplied: parseInt(mockStats.find(s => s.label === 'Jobs Applied')?.value || '0'),
-          events: parseInt(mockStats.find(s => s.label === 'Events')?.value || '0'),
-          mentorships: parseInt(mockStats.find(s => s.label === 'Mentorships')?.value || '0')
-        },
-        announcements: dashboardAnnouncements,
-        jobApplications: dashboardJobApplications as JobApplication[],
-        events: upcomingEvents.map((e, i) => ({ ...e, id: `mock-${i}` })),
-        fundings: dashboardProjectFundings as ProjectFunding[]
-      });
-
-      setUserProfile({
-        ...user,
-        firstName: 'Test',
-        lastName: 'User',
-        headline: 'Mock User Role',
-        id: 'mock-id',
-        email: mockCredentials.email,
-        profileComplete: true,
-        profilePicture: null,
-        resumeUrl: null
-      } as UserProfile);
-
-      setLoading(false);
-      return;
-    }
-
-    // Real user - fetch from API using simple approach like Events page
+    console.log('Fetching dashboard data...');
+    // Real user - fetch from API using the new services
     try {
-      console.log('Real user detected, fetching events and announcements...');
+      console.log('Fetching dashboard data from services...');
 
-      // Force fresh API calls with cache-busting
-      console.log('=== FORCE FRESH API CALLS ===');
-
-      // Fetch events and announcements (both working)
-      const [events, announcements, postsData] = await Promise.all([
-        apiClient.getAllEvents(),
-        apiClient.getAnnouncements(),
-        apiClient.getAllPosts().catch(() => []) // Fallback to empty array if posts fail
+      // Fetch all dashboard data in parallel
+      const [stats, announcements, jobApplications, events, fundings, userProfile] = await Promise.all([
+        DashboardService.getStats().catch(() => null),
+        DashboardService.getAnnouncements().catch(() => []),
+        DashboardService.getJobApplications().catch(() => []),
+        DashboardService.getUpcomingEvents().catch(() => []),
+        DashboardService.getProjectFundings().catch(() => []),
+        ProfileService.getProfile().catch(() => null)
       ]);
 
-      console.log('Events fetched successfully:', events);
-      console.log('Announcements fetched successfully:', announcements);
-      console.log('Posts fetched successfully:', postsData);
-
-      // Set posts state
-      setPosts(postsData);
-      console.log('Posts fetched and set:', postsData);
+      console.log('Dashboard stats fetched:', stats);
+      console.log('Dashboard announcements fetched:', announcements);
 
       setDashboardData(prev => ({
         ...prev,
-        events: events,
-        announcements: announcements
+        stats,
+        announcements,
+        jobApplications,
+        events,
+        fundings
       }));
 
-      console.log('Dashboard events and announcements updated');
-
-      // Fetch admin specific stats if admin
-      if (user?.role === 'ADMIN') {
-        try {
-          const [alumni, verifications, jobs, eventsList] = await Promise.all([
-            apiClient.getAllAlumni().catch(() => []),
-            apiClient.getVerifications().catch(() => []),
-            apiClient.getAllJobs().catch(() => []),
-            apiClient.getAllEvents().catch(() => [])
-          ]);
-
-          setAdminStats({
-            totalAlumni: alumni.length,
-            pendingVerifications: verifications.filter(u => u.verificationStatus === 'PENDING').length,
-            activeJobs: jobs.filter(j => j.active).length,
-            upcomingEvents: eventsList.length
-          });
-        } catch (adminErr) {
-          console.error('Failed to fetch admin stats:', adminErr);
-        }
+      if (userProfile) {
+        setUserProfile(userProfile);
       }
+
+      console.log('Dashboard data updated');
 
       // Force re-render
       setDataUpdateKey(prev => prev + 1);
 
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load dashboard data. Please refresh.',
+        variant: 'destructive'
+      });
     } finally {
       setLoading(false);
     }
@@ -366,19 +311,22 @@ export default function Dashboard() {
     }
   };
 
-  // Use real user data or fallback to mock data
-  const isMockUser = user?.email === mockCredentials.email;
-
+  // Determine current user from profile or auth context
   const currentUser = userProfile ? {
     name: `${userProfile.firstName} ${userProfile.lastName}`,
     role: userProfile.headline || 'Alumni',
     initials: `${userProfile.firstName?.[0] || ''}${userProfile.lastName?.[0] || ''}`.toUpperCase(),
     avatar: userProfile.profilePicture ? getImageUrl(userProfile.profilePicture) : null
-  } : isMockUser ? dashboardUser : {
-    name: user ? `${user.firstName} ${user.lastName}` : 'User',
-    role: user?.headline || 'Alumni Member',
-    initials: user ? `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase() : 'U',
-    avatar: user?.profilePicture ? getImageUrl(user.profilePicture) : null
+  } : user ? {
+    name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'User',
+    role: user.headline || user.role || 'Alumni Member',
+    initials: `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase(),
+    avatar: user.profilePicture ? getImageUrl(user.profilePicture) : null
+  } : {
+    name: 'User',
+    role: 'Alumni Member',
+    initials: 'U',
+    avatar: null
   };
 
   if (loading) {

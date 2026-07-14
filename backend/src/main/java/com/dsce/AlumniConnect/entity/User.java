@@ -58,6 +58,12 @@ public class User {
     private List<Achievement> achievements;
     private VerificationStatus verificationStatus = VerificationStatus.PENDING;
 
+    // Parent relationships - track orphan cleanup
+    private List<String> postIds; // References to User's posts for cascade delete
+    private List<String> commentIds; // References to User's comments for cascade delete
+    private List<String> jobPostIds; // References to User's job posts
+    private List<String> jobApplicationIds; // References to User's job applications
+
     @Getter
     @Setter
     @NoArgsConstructor
